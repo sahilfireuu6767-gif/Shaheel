@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔥 Fire Biryani Cart</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;min-height:100vh;color:white;background:linear-gradient(135deg,#160604,#431508,#160604)}
+.container{width:92%;max-width:1000px;margin:auto;padding:30px 0}
+h1{text-align:center;font-size:clamp(32px,7vw,55px);color:#ffd166;margin-bottom:8px}
+.subtitle{text-align:center;color:#ffd9a0;margin-bottom:30px}
+.menu{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
+.card{background:#24100a;border:1px solid #7b3715;border-radius:20px;padding:25px;text-align:center;box-shadow:0 10px 30px #0008;transition:transform .3s,box-shadow .3s}
+.card:hover{transform:translateY(-8px);box-shadow:0 15px 40px #ff5a0055}
+.food{font-size:70px;margin-bottom:10px;filter:drop-shadow(0 0 12px #ff6500)}
+.card h2{margin-bottom:10px}
+.price{color:#ffd166;font-size:21px;font-weight:bold;margin-bottom:15px}
+button{border:none;border-radius:10px;padding:12px 18px;background:#ff6500;color:white;font-weight:bold;cursor:pointer;transition:transform .2s,background .2s}
+button:hover{transform:scale(1.06);background:#ff8c00}
+.cart{margin-top:30px;background:#120705;border:1px solid #783611;border-radius:20px;padding:22px}
+.cart h2{margin-bottom:15px}
+.cart-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #492015}
+.total{text-align:right;color:#ffd166;font-size:23px;font-weight:bold;margin:18px 0}
+#fire{position:fixed;left:0;bottom:0;width:100%;height:0;pointer-events:none;z-index:100}
+.flame{position:absolute;bottom:0;font-size:42px;animation:fireBurst 1.5s ease-out forwards}
+.smoke{position:absolute;bottom:40px;font-size:30px;animation:smokeBurst 2s ease-out forwards}
+@keyframes fireBurst{0%{transform:translate(0,20px) scale(.2) rotate(0);opacity:0}20%{opacity:1}100%{transform:translate(var(--x),-170px) scale(1.4) rotate(30deg);opacity:0}}
+@keyframes smokeBurst{0%{transform:translateY(0) scale(.4);opacity:.8}100%{transform:translate(var(--x),-200px) scale(2);opacity:0}}
+@media(max-width:600px){.container{width:94%;padding:20px 0}.card{padding:20px}.food{font-size:58px}.cart-row{font-size:14px}}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🔥 Fire Biryani</h1>
+<p class="subtitle">Add your favourite biryani and watch the fire!</p>
+<div class="menu">
+<div class="card"><div class="food">🍗</div><h2>Chicken Biryani</h2><div class="price">₹180</div><button onclick="addItem('Chicken Biryani',180)">Add to Cart</button></div>
+<div class="card"><div class="food">🍖</div><h2>Mutton Biryani</h2><div class="price">₹260</div><button onclick="addItem('Mutton Biryani',260)">Add to Cart</button></div>
+<div class="card"><div class="food">🥚</div><h2>Egg Biryani</h2><div class="price">₹150</div><button onclick="addItem('Egg Biryani',150)">Add to Cart</button></div>
+</div>
+<div class="cart">
+<h2>🛒 Your Cart</h2>
+<div id="cartItems">No items yet.</div>
+<div class="total">Total: ₹<span id="total">0</span></div>
+<button onclick="clearCart()">Clear Cart</button>
+</div>
+</div>
+<div id="fire"></div>
+<script>
+let cart=[];
+function addItem(name,price){
+ const item=cart.find(x=>x.name===name);
+ if(item)item.qty++;else cart.push({name,price,qty:1});
+ renderCart(); fireBurst();
+}
+function renderCart(){
+ const box=document.getElementById("cartItems");
+ if(!cart.length){box.innerHTML="No items yet.";document.getElementById("total").textContent="0";return}
+ box.innerHTML=cart.map((item,index)=>`<div class="cart-row"><span>${item.name} × ${item.qty}</span><span>₹${item.price*item.qty}<button onclick="removeItem(${index})" style="padding:6px 10px;margin-left:8px">−</button></span></div>`).join("");
+ document.getElementById("total").textContent=cart.reduce((sum,item)=>sum+item.price*item.qty,0);
+}
+function removeItem(index){cart[index].qty--;if(cart[index].qty<=0)cart.splice(index,1);renderCart()}
+function clearCart(){cart=[];renderCart()}
+function fireBurst(){
+ const fire=document.getElementById("fire");
+ for(let i=0;i<20;i++){
+  const flame=document.createElement("span");flame.className="flame";flame.textContent=Math.random()>0.3?"🔥":"✨";
+  flame.style.left=Math.random()*100+"vw";flame.style.setProperty("--x",(Math.random()*200-100)+"px");
+  flame.style.animationDelay=Math.random()*0.2+"s";fire.appendChild(flame);setTimeout(()=>flame.remove(),1800);
+ }
+ for(let i=0;i<7;i++){
+  const smoke=document.createElement("span");smoke.className="smoke";smoke.textContent="💨";
+  smoke.style.left=Math.random()*100+"vw";smoke.style.setProperty("--x",(Math.random()*160-80)+"px");
+  fire.appendChild(smoke);setTimeout(()=>smoke.remove(),2200);
+ }
+}
+renderCart();
+</script>
+</body>
+</html>
